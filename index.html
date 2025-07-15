@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EchoBoard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-neutral-900 text-white p-6 min-h-screen flex flex-col items-center">
+
+  <h1 class="text-2xl font-bold mb-4">EchoBoard</h1>
+  <div id="playbackArea" class="w-full max-w-3xl h-96 border-2 border-dashed border-neutral-700 rounded-lg relative mb-6">
+    <!-- Click dots appear here -->
+  </div>
+
+  <button id="replayBtn" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded font-semibold">
+    Replay Clicks
+  </button>
+
+  <script>
+    const area = document.getElementById('playbackArea');
+    const replayBtn = document.getElementById('replayBtn');
+    const clicks = [];
+
+    area.addEventListener('click', (e) => {
+      const rect = area.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const time = Date.now();
+
+      const dot = document.createElement('div');
+      dot.className = 'absolute w-4 h-4 bg-red-500 rounded-full opacity-80';
+      dot.style.left = `${x - 8}px`;
+      dot.style.top = `${y - 8}px`;
+      area.appendChild(dot);
+
+      clicks.push({ x, y, time });
+    });
+
+    replayBtn.addEventListener('click', () => {
+      area.innerHTML = '';
+      if (clicks.length < 2) return;
+
+      const start = clicks[0].time;
+
+      clicks.forEach((click, i) => {
+        const delay = click.time - start;
+        setTimeout(() => {
+          const dot = document.createElement('div');
+          dot.className = 'absolute w-4 h-4 bg-green-400 rounded-full opacity-80';
+          dot.style.left = `${click.x - 8}px`;
+          dot.style.top = `${click.y - 8}px`;
+          area.appendChild(dot);
+        }, delay);
+      });
+    });
+  </script>
+</body>
+</html>
